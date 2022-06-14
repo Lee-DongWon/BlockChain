@@ -106,9 +106,13 @@ contract Vault {
             bytes16 initialPrice = longDepositPrice[msg.sender];
             _longBurn(msg.sender, _amount, ABDKMathQuad.toUInt(initialPrice));
             if (ABDKMathQuad.cmp(longEarn, shortEarn) == 1){
-                //tempResult2 = ABDKMathQuad.div(ABDKMathQuad.mul(ABDKMathQuad.sub(ABDKMathQuad.fromUInt(_withdrawPrice), initialPrice), shortEarn), longEarn);
-                tempResult2 = ABDKMathQuad.sub(ABDKMathQuad.fromUInt(_withdrawPrice), initialPrice);
-                result = ABDKMathQuad.toUInt(ABDKMathQuad.add(tempResult1, tempResult2));
+                if (shortTotalSupply == 0){
+                    tempResult2 = ABDKMathQuad.sub(ABDKMathQuad.fromUInt(_withdrawPrice), initialPrice);
+                    result = ABDKMathQuad.toUInt(ABDKMathQuad.add(tempResult1, tempResult2));
+                } else{
+                    tempResult2 = ABDKMathQuad.div(ABDKMathQuad.mul(ABDKMathQuad.sub(ABDKMathQuad.fromUInt(_withdrawPrice), initialPrice), shortEarn), longEarn);
+                    result = ABDKMathQuad.toUInt(ABDKMathQuad.add(tempResult1, tempResult2));
+                }
             } else{
                 tempResult2 = ABDKMathQuad.sub(initialPrice, ABDKMathQuad.fromUInt(_withdrawPrice));
                 result = ABDKMathQuad.toUInt(ABDKMathQuad.sub(tempResult1, tempResult2));
@@ -121,9 +125,13 @@ contract Vault {
             bytes16 initialPrice = longDepositPrice[msg.sender];
             _shortBurn(msg.sender, _amount, ABDKMathQuad.toUInt(initialPrice));
             if (ABDKMathQuad.cmp(shortEarn, longEarn) == 1){
-                // tempResult2 = ABDKMathQuad.div(ABDKMathQuad.mul(ABDKMathQuad.sub(initialPrice, ABDKMathQuad.fromUInt(_withdrawPrice)), longEarn), shortEarn);
-                tempResult2 = ABDKMathQuad.sub(initialPrice, ABDKMathQuad.fromUInt(_withdrawPrice));
-                result = ABDKMathQuad.toUInt(ABDKMathQuad.add(tempResult1, tempResult2));
+                if (longTotalSupply == 0){
+                    tempResult2 = ABDKMathQuad.sub(initialPrice, ABDKMathQuad.fromUInt(_withdrawPrice));
+                    result = ABDKMathQuad.toUInt(ABDKMathQuad.add(tempResult1, tempResult2));
+                } else{
+                    tempResult2 = ABDKMathQuad.div(ABDKMathQuad.mul(ABDKMathQuad.sub(initialPrice, ABDKMathQuad.fromUInt(_withdrawPrice)), longEarn), shortEarn);
+                    result = ABDKMathQuad.toUInt(ABDKMathQuad.add(tempResult1, tempResult2));
+                }
             } else{
                 tempResult2 = ABDKMathQuad.sub(initialPrice, ABDKMathQuad.fromUInt(_withdrawPrice));
                 result = ABDKMathQuad.toUInt(ABDKMathQuad.sub(tempResult1, tempResult2));
